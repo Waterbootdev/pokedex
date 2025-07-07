@@ -33,3 +33,4 @@ go.work.sum
 
 #current go
 pokedex
+repl.log
