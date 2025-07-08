@@ -34,32 +34,29 @@ func commandHelp(_ *config) error {
 	return nil
 }
 
-func subMapCommand(config *config, locationsResp *pokeapi.Resource) {
+func commandMap(config *config, getListLocationAreas func() (pokeapi.Resource, error)) error {
+	resource, err := getListLocationAreas()
 
-	config.nextLocationsURL = locationsResp.Next
-	config.prevLocationsURL = locationsResp.Previous
+	if err != nil {
+		return err
+	}
 
-	for _, loc := range locationsResp.Results {
+	config.nextLocationsURL = resource.Next
+	config.prevLocationsURL = resource.Previous
+
+	for _, loc := range resource.Results {
 		fmt.Println(loc.Name)
 	}
-}
 
-func commandMapb(config *config) error {
-	locationResp, err := config.PreviousListLocationAreas()
-	if err != nil {
-		return err
-	}
-	subMapCommand(config, locationResp)
 	return nil
 }
 
-func commandMap(config *config) error {
-	locationsResp, err := config.NextListLocationAreas()
-	if err != nil {
-		return err
-	}
-	subMapCommand(config, locationsResp)
-	return nil
+func commandMapPrevious(config *config) error {
+	return commandMap(config, config.PreviousListLocationAreas)
+}
+
+func commandMapNext(config *config) error {
+	return commandMap(config, config.NextListLocationAreas)
 }
 
 func InitRegistry() {
@@ -77,12 +74,12 @@ func InitRegistry() {
 	registry["map"] = cliCommand{
 		name:        "map",
 		description: "Displays the next 20 location areas",
-		callback:    commandMap,
+		callback:    commandMapNext,
 	}
 	registry["mapb"] = cliCommand{
 		name:        "mapb",
 		description: "Displays the previous 20 location areas",
-		callback:    commandMapb,
+		callback:    commandMapPrevious,
 	}
 }
 

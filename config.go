@@ -12,18 +12,15 @@ type config struct {
 	prevLocationsURL *string
 }
 
-func (c *config) NextListLocationAreas() (*pokeapi.Resource, error) {
-	resource, err := c.pokeapiClient.ListLocationAreas(c.nextLocationsURL)
-	return &resource, err
+func (c *config) NextListLocationAreas() (pokeapi.Resource, error) {
+	return c.pokeapiClient.ListLocationAreas(c.nextLocationsURL)
 }
 
-func (c *config) PreviousListLocationAreas() (*pokeapi.Resource, error) {
+func (c *config) PreviousListLocationAreas() (pokeapi.Resource, error) {
 
 	if c.prevLocationsURL == nil {
-		return nil, errors.New("you're on the first page")
+		return pokeapi.Resource{}, errors.New("you're on the first page")
 	}
 
-	resource, err := c.pokeapiClient.ListLocationAreas(c.prevLocationsURL)
-
-	return &resource, err
+	return c.pokeapiClient.ListLocationAreas(c.prevLocationsURL)
 }
