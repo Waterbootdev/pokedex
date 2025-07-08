@@ -20,11 +20,14 @@ func (c *Config) printNames(locationURL *string) error {
 
 	resource, err := c.pokeapiClient.ListLocationAreas(locationURL)
 
-	if err == nil {
-		c.nextLocationsURL = resource.Next
-		c.prevLocationsURL = resource.Previous
-		resource.printNames()
+	if err != nil {
+		return err
 	}
+
+	c.nextLocationsURL = resource.Next
+	c.prevLocationsURL = resource.Previous
+
+	resource.printNames()
 
 	return err
 }
