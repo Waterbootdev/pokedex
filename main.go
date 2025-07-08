@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+
+	"github.com/Waterbootdev/pokedex/internal/pokeapi"
 )
 
 func PrintPrompt() {
@@ -15,7 +17,7 @@ func ScanCleanInput(scanner *bufio.Scanner) []string {
 	return CleanInput(scanner.Text())
 }
 
-func PrintCommand(cleanInput []string, config *config) {
+func PrintCommand(cleanInput []string, config *pokeapi.Config) {
 
 	if !(len(cleanInput) > 0 && HandleCommand(cleanInput[0], config)) {
 		fmt.Println("Unknown command")
@@ -24,7 +26,7 @@ func PrintCommand(cleanInput []string, config *config) {
 
 func main() {
 
-	config := InitConfig()
+	config := pokeapi.InitConfig()
 
 	fmt.Println()
 

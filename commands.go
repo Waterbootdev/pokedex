@@ -10,18 +10,18 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(config *config) error
+	callback    func(config *pokeapi.Config) error
 }
 
 var registry map[string]cliCommand = make(map[string]cliCommand)
 
-func commandExit(_ *config) error {
+func commandExit(_ *pokeapi.Config) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp(_ *config) error {
+func commandHelp(_ *pokeapi.Config) error {
 
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
@@ -34,29 +34,12 @@ func commandHelp(_ *config) error {
 	return nil
 }
 
-func commandMap(config *config, getListLocationAreas func() (pokeapi.Resource, error)) error {
-	resource, err := getListLocationAreas()
-
-	if err != nil {
-		return err
-	}
-
-	config.nextLocationsURL = resource.Next
-	config.prevLocationsURL = resource.Previous
-
-	for _, loc := range resource.Results {
-		fmt.Println(loc.Name)
-	}
-
-	return nil
+func commandMapPrevious(config *pokeapi.Config) error {
+	return config.PrintPreviousListLocationAreas()
 }
 
-func commandMapPrevious(config *config) error {
-	return commandMap(config, config.PreviousListLocationAreas)
-}
-
-func commandMapNext(config *config) error {
-	return commandMap(config, config.NextListLocationAreas)
+func commandMapNext(config *pokeapi.Config) error {
+	return config.PrintNextListLocationAreas()
 }
 
 func InitRegistry() {
@@ -83,7 +66,7 @@ func InitRegistry() {
 	}
 }
 
-func HandleCommand(command string, config *config) bool {
+func HandleCommand(command string, config *pokeapi.Config) bool {
 	cmd, ok := registry[command]
 	if ok {
 		err := cmd.callback(config)
