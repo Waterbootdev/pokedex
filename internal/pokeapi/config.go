@@ -6,41 +6,50 @@ import (
 )
 
 type Config struct {
-	pokeapiClient    Client
-	nextLocationsURL *string
-	prevLocationsURL *string
+	client                   Client
+	previousLocationAreasURL *string
+	nextLocationAreasURL     *string
 }
 
 func InitConfig() Config {
 	pokeClient := NewClient(5 * time.Second)
-	return Config{pokeapiClient: pokeClient}
+	return Config{client: pokeClient}
 }
 
-func (c *Config) printNames(locationURL *string) error {
+func LocationAreasURL(url *string) string {
+	if url == nil {
+		return locationAreasURL
+	} else {
+		return *url
+	}
+}
 
-	resource, err := c.pokeapiClient.ListLocationAreas(locationURL)
+func (c *Config) printNames(locationAreasURL *string) error {
+
+	locationAreasResource, err := c.client.ListLocationAreas(LocationAreasURL(locationAreasURL))
 
 	if err != nil {
 		return err
 	}
 
-	c.nextLocationsURL = resource.Next
-	c.prevLocationsURL = resource.Previous
+	c.previousLocationAreasURL = locationAreasResource.Previous
+	c.nextLocationAreasURL = locationAreasResource.Next
 
-	resource.printNames()
+	locationAreasResource.printNames()
 
 	return err
 }
 
 func (c *Config) PrintNextListLocationAreas() error {
-	return c.printNames(c.nextLocationsURL)
+
+	return c.printNames(c.nextLocationAreasURL)
 }
 
 func (c *Config) PrintPreviousListLocationAreas() error {
 
-	if c.prevLocationsURL == nil {
+	if c.previousLocationAreasURL == nil {
 		return errors.New("you're on the first page")
 	}
 
-	return c.printNames(c.prevLocationsURL)
+	return c.printNames(c.previousLocationAreasURL)
 }

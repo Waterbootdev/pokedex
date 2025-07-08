@@ -6,16 +6,12 @@ import (
 	"net/http"
 )
 
-func (c *Client) ListLocationAreas(pageURL *string) (*Resource, error) {
+func (c *Client) ListLocationAreas(currentLocationAreasURL string) (*Resource, error) {
 
 	resource := &Resource{}
 
-	url := baseURL + "/location-area"
-	if pageURL != nil {
-		url = *pageURL
-	}
+	req, err := http.NewRequest("GET", currentLocationAreasURL, nil)
 
-	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return resource, err
 	}
@@ -36,5 +32,5 @@ func (c *Client) ListLocationAreas(pageURL *string) (*Resource, error) {
 		return resource, err
 	}
 
-	return resource, nil
+	return resource, err
 }
