@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/Waterbootdev/pokedex/internal/pokeapi"
+	"github.com/Waterbootdev/pokedex/internal/pokecache"
 )
 
 func PrintPrompt() {
@@ -26,7 +28,7 @@ func PrintCommand(cleanInput []string, config *pokeapi.Config) {
 
 func main() {
 
-	config := pokeapi.InitConfig()
+	config := pokeapi.InitConfig(pokecache.NewCache(5 * time.Second))
 
 	fmt.Println()
 

@@ -2,13 +2,41 @@ package pokeapi
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 )
 
-func (c *Client) ListLocationAreas(currentLocationAreasURL string) (*Resource, error) {
+func (c *Client) CachedListLocationAreas(currentLocationAreasURL string) (*Resource, bool, error) {
 
 	resource := &Resource{}
+
+	dat, ok := c.cache.Get(currentLocationAreasURL)
+	if ok {
+		err := json.Unmarshal(dat, resource)
+		if err == nil {
+			return resource, ok, err
+		} else {
+			return resource, ok, errors.New("cached data is no resource")
+		}
+	} else {
+
+		return resource, ok, nil
+	}
+
+}
+
+func (c *Client) ListLocationAreas(currentLocationAreasURL string) (*Resource, error) {
+
+	resource, ok, err := c.CachedListLocationAreas(currentLocationAreasURL)
+
+	if err != nil {
+		return resource, err
+	}
+
+	if ok {
+		return resource, nil
+	}
 
 	req, err := http.NewRequest("GET", currentLocationAreasURL, nil)
 
@@ -26,6 +54,8 @@ func (c *Client) ListLocationAreas(currentLocationAreasURL string) (*Resource, e
 	if err != nil {
 		return resource, err
 	}
+
+	c.cache.Add(currentLocationAreasURL, dat)
 
 	err = json.Unmarshal(dat, resource)
 	if err != nil {

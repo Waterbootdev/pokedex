@@ -3,6 +3,8 @@ package pokeapi
 import (
 	"errors"
 	"time"
+
+	"github.com/Waterbootdev/pokedex/internal/pokecache"
 )
 
 type Config struct {
@@ -11,9 +13,11 @@ type Config struct {
 	nextLocationAreasURL     *string
 }
 
-func InitConfig() Config {
-	pokeClient := NewClient(5 * time.Second)
-	return Config{client: pokeClient}
+func InitConfig(cache pokecache.Cache) Config {
+	pokeClient := NewClient(5*time.Second, cache)
+	return Config{
+		client: pokeClient,
+	}
 }
 
 func LocationAreasURL(url *string) string {
