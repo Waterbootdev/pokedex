@@ -24,12 +24,7 @@ func PrintCommand(cleanInput []string, config *config) {
 
 func main() {
 
-	config, err := InitConfig(20)
-
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	config := InitConfig()
 
 	fmt.Println()
 
