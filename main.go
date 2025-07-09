@@ -21,7 +21,19 @@ func ScanCleanInput(scanner *bufio.Scanner) []string {
 
 func PrintCommand(cleanInput []string, config *pokeapi.Config) {
 
-	if !(len(cleanInput) > 0 && HandleCommand(cleanInput[0], config)) {
+	ok := false
+
+	switch len(cleanInput) {
+
+	case 1:
+		ok = HandleCommand(cleanInput[0], config, "")
+
+	case 2:
+		ok = HandleCommand(cleanInput[0], config, cleanInput[1])
+
+	}
+
+	if !ok {
 		fmt.Println("Unknown command")
 	}
 }

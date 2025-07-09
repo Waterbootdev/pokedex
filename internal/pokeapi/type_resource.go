@@ -1,5 +1,7 @@
 package pokeapi
 
+import "fmt"
+
 type Resource struct {
 	Count    int      `json:"count"`
 	Next     *string  `json:"next"`
@@ -9,6 +11,6 @@ type Resource struct {
 
 func (r *Resource) printNames() {
 	for _, result := range r.Results {
-		println(result.Name)
+		fmt.Println(result.Name)
 	}
 }
